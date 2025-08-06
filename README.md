@@ -5,5 +5,3 @@ condor. It contains the following files:
 - `get_time.py` : calculates job runtime from log file
 - `pysubmit.py` : python wrapper script for submission of executable to cluster
 - `README.md` : this file
-
-This is just a tiny test of gitignore
