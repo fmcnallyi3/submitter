@@ -1,0 +1,12 @@
+# npx4 log, error, executable, and output folders
+npx4-*/
+#npx4-*/*
+
+# Condor submission file
+2sub.sub
+
+# Python cache
+__pycache__/*
+
+# .pyc files
+*.pyc
