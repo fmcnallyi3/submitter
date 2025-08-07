@@ -5,10 +5,10 @@
 # correctly, and can remove files associated with good runs
 #######################################################
 
-import os, sys, argparse
+import sys, argparse
 from pathlib import Path
 
-from get_time import getTime
+from get_time import get_time
 
 
 def main():
@@ -43,15 +43,13 @@ def main():
 
     # Exit if no files found
     if len(jobIDs) == 0:
-        print(f'No npx4 files found in {args.npxdir}. Quitting...')
-        sys.exit(0)
+        sys.exit(f'No npx4 files found in {args.npxdir}. Quitting...')
 
     # Early opportunity to back out on rerun command
     if args.rerun:
         yn = input('Rerun all bad and held executables? [y/N]: ')
         if yn != 'y':
-            print('Rerun canceled. Aborting...')
-            sys.exit(0)
+            sys.exit('Rerun canceled. Aborting...')
 
     # Option to purge all npx4 files
     if args.purge:
@@ -59,9 +57,9 @@ def main():
         if yn == 'y':
             for f in files:
                 f.unlink()
+            sys.exit(f'{len(files)} successfully deleted')
         else:
-            print('Purge canceled')
-        sys.exit(0)
+            sys.exit('Purge canceled')
 
     job_status = ['good','orphaned','held','aborted','bad']
     status = {status_type:[] for status_type in job_status}
@@ -119,7 +117,7 @@ def main():
         is_good = good_file(err, args.strict)
 
         # Calculate run time from log file
-        t0 = getTime(log)
+        t0 = get_time(log)
 
         # Jobs with a runtime of None are still running
         if t0 == None:
@@ -184,28 +182,32 @@ def resubmit(npxdir, jobID):
 
     # Condor submission script
     d = {}
-    d['executable'] = '%s/npx4-execs/%s.sh\n' % (npxdir, jobID)
-    d['log'] = '%s/npx4-logs/%s.log\n' % (npxdir, jobID)
-    d['output'] = '%s/npx4-out/%s.out\n' % (npxdir, jobID)
-    d['error'] = '%s/npx4-error/%s.error\n' % (npxdir, jobID)
+    d['executable'] = f'{npxdir}/npx4-execs/{jobID}.sh\n'
+    d['log'] = f'{npxdir}/npx4-logs/{jobID}.log\n'
+    d['output'] = f'{npxdir}/npx4-out/{jobID}.out\n'
+    d['error'] = f'{npxdir}/npx4-error/{jobID}.error\n'
 
+    # Read in previous submission script
     with open('2sub.sub','r') as f:
         lines = f.readlines()
 
-    for key in d.keys():
+    for key, value in d.items():
+
+        # Replace exe/log/out/err filenames
         for i, l in enumerate(lines):
             if l.split(' ')[0].lower() == key:
-                lines[i] = '%s = %s' % (key, d[key])
+                lines[i] = f'{key} = {value}'
+
         # Remove all log, output, and error files before resubmitting
-        if os.path.isfile(d[key].strip()) and 'exec' not in key:
-            print(f'File {d[key]} found! Removing...')
-            os.remove(d[key].strip())
+        file_path = Path(value.strip())
+        if file_path.is_file() and 'exec' not in key:
+            print(f'File {value} found! Removing...')
+            file_path.unlink()
 
     with open('2sub.sub', 'w') as f:
         f.writelines(lines)
 
-    os.system('condor_submit %s' % '2sub.sub')
-
+    result = subprocess.run(['condor_submit','2sub.sub'])
 
 
 

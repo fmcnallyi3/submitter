@@ -21,7 +21,7 @@ def extract_time(line, end=False):
     
     
 
-def getTime(filename):
+def get_time(filename):
 
     if not Path(filename).is_file():
         print(f'Log file {str(filename)} not found')
