@@ -169,7 +169,7 @@ def main():
         yn = input('Do you want to remove the good runs? [y/N]: ')
         if yn == 'y':
             for jobID in status['good']:
-                rm_files = Path(args.npxdir).glob('npx4-*/{jobID}.*')
+                rm_files = Path(args.npxdir).glob(f'npx4-*/{jobID}.*')
                 for f in rmFiles:
                     f.unlink()
 
