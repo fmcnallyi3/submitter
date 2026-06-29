@@ -28,15 +28,17 @@ def pysubmit(executable, jobID=None, outdir=None,
     if outdir == None:
         outdir = Path(__file__).parent.resolve()
 
-    # NOTE: Change code so executable if NOT a list is changed to a list, then
-    # adapt everything below to work assuming a list
+    # Code allows for submission of multiple executables in one job
+    if not isinstance(executable, list):
+        executable = [executable]
 
     # Option for testing off cluster
     if test:
-        result = subprocess.run(executable.split(' '))
-        # Checking for errors
-        if result.returncode != 0:
-            print(f'Error: {result.stderr}')
+        for ex in executable:
+            result = subprocess.run(ex.split(' '))
+            # Checking for errors
+            if result.returncode != 0:
+                print(f'Error: {result.stderr}')
         return
 
     # Default naming for jobIDs if not specified
@@ -54,9 +56,9 @@ def pysubmit(executable, jobID=None, outdir=None,
     exelines = header + [
         'date',
         'hostname',
-        '',
-        f'{executable}',
-        '',
+        ''] + \
+        executable + \
+        ['',
         'date',
         'echo "Fin"'
     ]
