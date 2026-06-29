@@ -170,7 +170,7 @@ def main():
         if yn == 'y':
             for jobID in status['good']:
                 rm_files = Path(args.npxdir).glob(f'npx4-*/{jobID}.*')
-                for f in rmFiles:
+                for f in rm_files:
                     f.unlink()
 
 
@@ -217,9 +217,9 @@ def getErrorList():
     # General safe errors
     safeErrors.append('Error in <TSystem::ExpandFileName>: input: $HOME/.root.mimes, output: $HOME/.root.mimes')
     # Time-scrambling errors assoc. w/ file already exists?
-    safeErrors.append('FITS error')
-    safeErrors.append("terminate called after throwing an instance of 'Message_error'")
-    safeErrors.append("/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib/python3.7/site-packages/astropy/config/configuration.py:532: ConfigurationMissingWarning: Configuration defaults will be used due to OSError:Could not find unix home directory to search for astropy config dir on None")
+    #safeErrors.append('FITS error')
+    #safeErrors.append("terminate called after throwing an instance of 'Message_error'")
+    #safeErrors.append("/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib/python3.7/site-packages/astropy/config/configuration.py:532: ConfigurationMissingWarning: Configuration defaults will be used due to OSError:Could not find unix home directory to search for astropy config dir on None")
     return safeErrors
 
 

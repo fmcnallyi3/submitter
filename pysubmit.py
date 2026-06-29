@@ -28,6 +28,9 @@ def pysubmit(executable, jobID=None, outdir=None,
     if outdir == None:
         outdir = Path(__file__).parent.resolve()
 
+    # NOTE: Change code so executable if NOT a list is changed to a list, then
+    # adapt everything below to work assuming a list
+
     # Option for testing off cluster
     if test:
         result = subprocess.run(executable.split(' '))
